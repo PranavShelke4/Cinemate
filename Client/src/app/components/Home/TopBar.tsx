@@ -5,7 +5,7 @@ import Image from "next/image";
 import Search from "../../../../public/icons/home/Search.svg";
 import Like from "../../../../public/icons/home/Likes.svg";
 import Chat from "../../../../public/icons/home/Chat.svg";
-import User from "../../../../public/icons/home/user.svg";
+import Profile from "../../../../public/icons/home/Profile.svg";
 
 function NavBar() {
   return (
@@ -29,7 +29,7 @@ function NavBar() {
         </Link>
         <Link href="/profile">
           <Image
-            src={User}
+            src={Profile}
             alt="Profile"
             className="h-10 w-10 rounded-full hover:opacity-75"
           />
