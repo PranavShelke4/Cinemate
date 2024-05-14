@@ -34,7 +34,7 @@ function Stories() {
   };
 
   return (
-    <div className="w-full pl-12 mt-0 sm:mt-20 overflow-x-auto snap-x snap-mandatory space-x-4 p-4 scrollbar-hide">
+    <div className="w-full mb-2 sm:mb-0 pl-0 sm:pl-12 mt-0 sm:mt-20 overflow-x-auto snap-x snap-mandatory space-x-4 p-4 scrollbar-hide">
       <div className="w-full flex space-x-4">
         <Link href="/add-story">
           <div className="snap-center shrink-0 w-16 sm:w-20 h-16 sm:h-20 relative border-2 border-white rounded-full overflow-hidden cursor-pointer shadow-lg m-2">

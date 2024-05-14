@@ -9,7 +9,7 @@ function Post({ post }: { post: any }) {
   const [liked, setLiked] = useState(false);
 
   return (
-    <div className="bg-gray-800 text-white mx-16 mb-4 rounded-lg shadow-lg">
+    <div className="bg-gray-800 mb-8 sm:mb-0 text-white mx-4 sm:mx-16 mb-4 rounded-lg shadow-lg">
       <div className="flex items-center mb-4 bg-gray-900 p-4">
         <Image
           src={profile}
@@ -32,22 +32,24 @@ function Post({ post }: { post: any }) {
           className="rounded-lg"
         />
       </div>
-      <div className="flex justify-between items-center bg-gray-900 p-4">
-        <div className="flex items-center space-x-4">
-          <button onClick={() => setLiked(!liked)}>
-            {liked ? (
-              <FaHeart className="text-red-500" size={20} />
-            ) : (
-              <FaRegHeart size={20} />
-            )}
-          </button>
-          <FaComment size={20} />
-          <FaShare size={20} />
-        </div>
-        <div className="flex space-x-4 text-gray-400">
-          <span>{post.likes} Likes</span>
-          <span>{post.comments} Comments</span>
-          <span>{post.shares} Shares</span>
+      <div className="flex flex-col sm:flex-row justify-between items-start bg-gray-900 p-4">
+        <div className="flex space-x-8 text-gray-400">
+          <span className="flex gap-2 items-center">
+            <button onClick={() => setLiked(!liked)}>
+              {liked ? (
+                <FaHeart className="text-red-500" size={20} />
+              ) : (
+                <FaRegHeart size={20} />
+              )}
+            </button>
+            {post.likes}
+          </span>
+          <span className="flex gap-2 items-center">
+            <FaComment size={20} /> {post.comments}
+          </span>
+          <span className="flex gap-2 items-center">
+            <FaShare size={20} /> {post.shares}
+          </span>
         </div>
       </div>
     </div>
