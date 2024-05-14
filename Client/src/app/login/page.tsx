@@ -1,9 +1,10 @@
 import React from "react";
+import Link from "next/link";
 
 function Login() {
   return (
-    <div className="max-h-screen flex flex-col justify-center items-center primary p-4 md:p-0 sm:p-0">
-      <div className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-full max-w-md">
+    <div className="max-h-screen flex min-h-screen flex-col items-center justify-center primary p-4 md:p-0 sm:p-0 bg-gray-900">
+      <div className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg">
         <h1 className="mb-6 text-center text-3xl font-bold text-white">
           Welcome back to Cinemate
         </h1>
@@ -18,7 +19,7 @@ function Login() {
             <input
               type="email"
               id="email"
-              className="mt-1 block w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              className="mt-1 block w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
               placeholder="Email"
             />
           </div>
@@ -32,7 +33,7 @@ function Login() {
             <input
               type="password"
               id="password"
-              className="mt-1 block w-full px-3 py-2 bg-gray-800 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              className="mt-1 block w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
               placeholder="Password"
             />
           </div>
@@ -53,13 +54,13 @@ function Login() {
           </button>
         </div>
         <div className="mt-4 text-center text-sm text-gray-400">
-          <a href="#" className="text-blue-500 hover:text-blue-400">
+          <Link href="#" className="text-blue-500 hover:text-blue-400">
             Forgot password?
-          </a>
+          </Link>
         </div>
         <div className="mt-4 text-center text-sm text-gray-400">
           New to Cinemate?{" "}
-          <a href="#" className="text-blue-500 hover:text-blue-400">
+          <a href="/signup" className="text-blue-500 hover:text-blue-400">
             Sign up now.
           </a>
         </div>
