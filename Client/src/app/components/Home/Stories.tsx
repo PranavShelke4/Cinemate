@@ -3,12 +3,13 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Story from "../../../../public/images/story.jpeg";
 
 const storiesData = [
-  { id: 1, image: "/path/to/story1.jpg", title: "Story 1", seen: false },
-  { id: 2, image: "/path/to/story2.jpg", title: "Story 2", seen: false },
-  { id: 3, image: "/path/to/story3.jpg", title: "Story 3", seen: false },
-  { id: 4, image: "/path/to/story3.jpg", title: "Story 4", seen: false },
+  { id: 1, image: Story, title: "Story 1", seen: false },
+  { id: 2, image: Story, title: "Story 2", seen: false },
+  { id: 3, image: Story, title: "Story 3", seen: false },
+  { id: 4, image: Story, title: "Story 4", seen: false },
 ];
 
 function Stories() {
@@ -36,13 +37,10 @@ function Stories() {
     <div className="w-full flex flex-col mt-0 sm:mt-20 overflow-x-auto snap-x snap-mandatory space-x-4 p-4 scrollbar-hide">
       <div className="w-full flex space-x-4">
         <Link href="/add-story">
-          <div className="snap-center shrink-0 w-16 sm:w-24 h-16 sm:h-24 relative border-2 border-white rounded-full overflow-hidden cursor-pointer shadow-lg m-2">
+          <div className="snap-center shrink-0 w-16 sm:w-20 h-16 sm:h-20 relative border-2 border-white rounded-full overflow-hidden cursor-pointer shadow-lg m-2">
             <div className="relative w-full h-full bg-gray-700 flex items-center justify-center text-white text-2xl font-bold">
               +
             </div>
-            {/* <span className="absolute bottom-0 left-0 right-0 text-center text-sm text-white mt-2">
-              Add Story
-            </span> */}
           </div>
         </Link>
         {stories
@@ -50,7 +48,7 @@ function Stories() {
           .map((story: any) => (
             <div
               key={story.id}
-              className={`snap-center shrink-0 w-16 sm:w-24 h-16 sm:h-24 relative border-2 border-white rounded-full overflow-hidden cursor-pointer shadow-lg m-2 ${
+              className={`snap-center shrink-0 w-16 sm:w-20 h-16 sm:h-20 relative border-2 border-white rounded-full overflow-hidden cursor-pointer shadow-lg m-2 ${
                 story.seen ? "opacity-50" : "opacity-100"
               }`}
               onClick={() => handleStoryClick(story)}
@@ -73,11 +71,14 @@ function Stories() {
           className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50"
           onClick={() => setSelectedStory(null)}
         >
-          <div className="relative w-full h-full max-w-3xl max-h-full">
+          <div className="relative w-full h-full max-w-3xl max-h-full flex flex-col items-center justify-center p-4">
+            {/* <h2 className="text-2xl text-white mb-4">{selectedStory.title}</h2> */}
             <Image
               src={selectedStory.image}
               alt={selectedStory.title}
-              layout="fill"
+              layout="responsive"
+              width={500}
+              height={500}
               objectFit="contain"
               className="rounded-lg"
             />
