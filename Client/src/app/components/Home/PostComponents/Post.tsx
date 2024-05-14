@@ -1,9 +1,11 @@
+"use client"
+
 import React, { useState } from "react";
 import Image from "next/image";
 import { FaHeart, FaRegHeart, FaComment, FaShare } from "react-icons/fa";
 
-import profile from "../../../../public/icons/home/Profile.svg";
-import Postt from "../../../../public/images/story.jpeg";
+import profile from "../../../../../public/icons/home/Profile.svg";
+import Postt from "../../../../../public/images/story.jpeg";
 
 function Post({ post }: { post: any }) {
   const [liked, setLiked] = useState(false);
