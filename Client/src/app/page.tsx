@@ -1,10 +1,12 @@
 import TopBar from "./components/Home/TopBar";
+import Stories from "./components/Home/Stories";
 import BottomNav from "./components/Home/BottomNav";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center background">
+    <main className="flex min-h-screen flex-col background">
       <TopBar />
+      <Stories />
       <BottomNav />
     </main>
   );
