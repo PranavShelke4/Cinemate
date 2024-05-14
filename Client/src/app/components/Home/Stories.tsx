@@ -34,7 +34,7 @@ function Stories() {
   };
 
   return (
-    <div className="w-full flex flex-col mt-0 sm:mt-20 overflow-x-auto snap-x snap-mandatory space-x-4 p-4 scrollbar-hide">
+    <div className="w-full pl-12 mt-0 sm:mt-20 overflow-x-auto snap-x snap-mandatory space-x-4 p-4 scrollbar-hide">
       <div className="w-full flex space-x-4">
         <Link href="/add-story">
           <div className="snap-center shrink-0 w-16 sm:w-20 h-16 sm:h-20 relative border-2 border-white rounded-full overflow-hidden cursor-pointer shadow-lg m-2">
@@ -72,7 +72,7 @@ function Stories() {
           onClick={() => setSelectedStory(null)}
         >
           <div className="relative w-full h-full max-w-3xl max-h-full flex flex-col items-center justify-center p-4">
-            {/* <h2 className="text-2xl text-white mb-4">{selectedStory.title}</h2> */}
+            <h2 className="text-2xl text-white mb-4">{selectedStory.title}</h2>
             <Image
               src={selectedStory.image}
               alt={selectedStory.title}

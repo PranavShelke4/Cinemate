@@ -9,7 +9,7 @@ import Profile from "../../../../public/icons/home/Profile.svg";
 
 function NavBar() {
   return (
-    <div className="hidden sm:flex fixed top-0 z-50 border-b-2 w-full text-white flex justify-between items-center p-4">
+    <div className="hidden bg-gray-900 sm:flex fixed top-0 z-50 border-b-2 w-full text-white flex justify-between items-center p-4">
       <div className="text-xl font-bold">
         <Link href="/">Cinemate</Link>
       </div>
