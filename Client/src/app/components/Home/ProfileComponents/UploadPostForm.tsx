@@ -9,6 +9,7 @@ function UploadPostForm({
   onUpload: (data: { title: string; image: File }) => void;
 }) {
   const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [image, setImage] = useState<File | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -31,6 +32,13 @@ function UploadPostForm({
         );
         onUpload(response.data.post);
         window.alert("Post uploaded successfully!");
+
+        setTitle("");
+        setContent("");
+        setImage(null);
+
+        // Reload the page
+        window.location.reload();
       } catch (err) {
         console.error(
           "Error uploading post:",

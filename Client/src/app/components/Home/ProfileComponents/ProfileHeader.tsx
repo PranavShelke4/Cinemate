@@ -56,7 +56,7 @@ function ProfileHeader() {
           src={profileImageSrc}
           alt="Profile Image"
           width={80}
-          height={10}
+          height={80}
           className="rounded-full object-cover w-20 h-20 sm:w-24 sm:h-24"
         />
         <div>

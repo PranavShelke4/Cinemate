@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const multer = require("multer");
 const fs = require("fs");
 const User = require("../models/userSchema");
+const Post = require("../models/Post");
 const authenticate = require("../middleware/authenticate");
 
 dotenv.config({ path: "./config.env" });
@@ -108,18 +109,24 @@ router.post("/signin", async (req, res) => {
 });
 
 // Fetch User Profile Information
-router.get("/profile", authenticate, (req, res) => {
-  if (!req.rootUser) {
-    return res.status(404).json({ error: "User not found" });
+router.get("/profile", authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.rootUser._id).populate("posts");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const postCount = await Post.countDocuments({ userId: user._id });
+    res.status(200).json({
+      name: user.name,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      posts: postCount,
+      followers: user.followers,
+      following: user.following,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
   }
-  res.status(200).json({
-    name: req.rootUser.name,
-    email: req.rootUser.email,
-    profilePicture: req.rootUser.profilePicture,
-    posts: req.rootUser.posts.length,
-    followers: req.rootUser.followers,
-    following: req.rootUser.following,
-  });
 });
 
 // Logout

@@ -63,12 +63,9 @@ function UserPosts() {
   }
 
   return (
-    <div className="flex flex-row gap-4 border-t pt-4">
+    <div className="flex flex-wrap justify-start gap-4 border-t pt-4">
       {posts.map((post) => (
-        <div
-          key={post._id}
-          className="relative max-w-1/3 bg-gray-700 rounded-lg"
-        >
+        <div key={post._id} className="relative w-[32%] bg-gray-700 rounded-lg flex justify-center items-center">
           <Image
             className="h-[24rem] object-cover rounded-lg hover:opacity-50"
             src={`http://localhost:8080${post.image}`}
