@@ -1,24 +1,21 @@
-"use client"
+"use client";
 
 import React, { useState } from "react";
 import Image from "next/image";
 import { FaHeart, FaRegHeart, FaComment, FaShare } from "react-icons/fa";
 
-import profile from "../../../../../public/icons/home/Profile.svg";
-import Postt from "../../../../../public/images/story.jpeg";
-
-function Post({ post }: { post: any }) {
+function Post({ post }) {
   const [liked, setLiked] = useState(false);
 
   return (
     <div className="bg-gray-800 mb-8 sm:mb-0 text-white mx-4 sm:mx-16 mb-4 rounded-lg shadow-lg">
       <div className="flex items-center mb-4 bg-gray-900 p-4">
         <Image
-          src={profile}
+          src={`http://localhost:8080${post.userImage}`}
           alt={post.username}
           width={40}
           height={40}
-          className="rounded-full"
+          className="rounded-full h-12 w-12 object-cover"
         />
         <div className="ml-4">
           <h2 className="text-lg font-semibold">{post.username}</h2>
@@ -27,7 +24,7 @@ function Post({ post }: { post: any }) {
       </div>
       <div className="mb-4 flex justify-center items-center">
         <Image
-          src={Postt}
+          src={`http://localhost:8080${post.image}`}
           alt={post.title}
           width={300}
           height={100}

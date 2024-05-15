@@ -62,4 +62,23 @@ router.get("/user-posts", authenticate, async (req, res) => {
   }
 });
 
+// Get all posts with pagination
+router.get("/posts", async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const posts = await Post.find()
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+    const count = await Post.countDocuments();
+    res.json({
+      posts,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
