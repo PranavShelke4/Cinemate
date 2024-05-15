@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ function Signup() {
     cpassword: "",
     profilePicture: null,
   });
+
+  const router = useRouter();
 
   const {
     name,
@@ -32,7 +35,7 @@ function Signup() {
     if (e.target.name === "profilePicture") {
       setFormData({
         ...formData,
-        [e.target.name]: URL.createObjectURL(e.target.files[0]),
+        [e.target.name]: e.target.files[0],
       });
     } else {
       setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -47,28 +50,32 @@ function Signup() {
     }
 
     try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("number", number);
+      formData.append("gender", gender);
+      formData.append("dob", dob);
+      formData.append("password", password);
+      formData.append("cpassword", cpassword);
+      formData.append("profilePicture", profilePicture);
+
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       };
-      const body = JSON.stringify({
-        name,
-        email,
-        number,
-        gender,
-        dob,
-        password,
-        cpassword,
-      });
+
       const res = await axios.post(
         "http://localhost:8080/signup",
-        body,
+        formData,
         config
       );
 
       console.log("User registered successfully:", res.data);
-      // Redirect or update UI here
+
+      // Redirect to the home page
+      router.push("/login");
     } catch (error) {
       if (error.response && error.response.status === 422) {
         alert(error.response.data.error);
@@ -94,11 +101,11 @@ function Signup() {
                 <div className="border group w-full h-full rounded-full overflow-hidden shadow-inner text-center bg-purple table cursor-pointer">
                   {profilePicture ? (
                     <Image
-                      src={profilePicture}
+                      src={URL.createObjectURL(profilePicture)}
                       alt="profile picture"
                       width={96}
                       height={50}
-                      className="object-cover object-center w-full max-h-24"
+                      className="flex justify-center items-center object-cover object-center w-full max-h-24"
                     />
                   ) : (
                     <span className="table-cell text-white font-bold align-middle">

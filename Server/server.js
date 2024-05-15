@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 dotenv.config({ path: './config.env' });
 require('./db/conn');
@@ -13,6 +14,9 @@ app.use(express.json());
 
 // cookie-parser middleware
 app.use(cookieParser()); 
+
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(cors({
   origin: 'http://localhost:3000',  // This should match the URL of your frontend application

@@ -3,32 +3,62 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const multer = require("multer");
+const fs = require("fs");
 const User = require("../models/userSchema");
 const authenticate = require("../middleware/authenticate");
 
 dotenv.config({ path: "./config.env" });
+
+// Ensure the uploads directory exists
+const UPLOADS_DIR = "uploads";
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR);
+}
+
+// Multer configuration for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, UPLOADS_DIR);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
 
 router.get("/", (req, res) => {
   res.send("This is Home page by router");
 });
 
 // Register API
-router.post("/signup", async (req, res) => {
+router.post("/signup", upload.single("profilePicture"), async (req, res) => {
   const { name, email, number, gender, dob, password, cpassword } = req.body;
+  const profilePicture = req.file ? `/${req.file.path}` : null;
 
   if (!name || !email || !number || !gender || !dob || !password || !cpassword) {
     return res.status(422).json({ error: "Please fill all fields" });
   }
 
   try {
-    const userExist = await User.findOne({ email: email });
+    const userExist = await User.findOne({ email });
 
     if (userExist) {
       return res.status(422).json({ error: "Email Already Exist" });
     } else if (password !== cpassword) {
       return res.status(422).json({ error: "Passwords do not match" });
     } else {
-      const user = new User({ name, email, number, gender, dob, password, cpassword });
+      const user = new User({
+        name,
+        email,
+        number,
+        gender,
+        dob,
+        password,
+        cpassword,
+        profilePicture,
+      });
 
       await user.save();
 
@@ -85,6 +115,7 @@ router.get("/profile", authenticate, (req, res) => {
   res.status(200).json({
     name: req.rootUser.name,
     email: req.rootUser.email,
+    profilePicture: req.rootUser.profilePicture,
     posts: req.rootUser.posts.length,
     followers: req.rootUser.followers,
     following: req.rootUser.following,
