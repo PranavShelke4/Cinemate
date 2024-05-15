@@ -33,7 +33,6 @@ router.get("/", (req, res) => {
 });
 
 // Register API
-// Register API
 router.post("/signup", upload.single("profilePicture"), async (req, res) => {
   const { name, email, number, gender, dob, password, cpassword } = req.body;
   const profilePicture = req.file ? `/uploads/${req.file.filename}` : null;
@@ -69,7 +68,6 @@ router.post("/signup", upload.single("profilePicture"), async (req, res) => {
     console.log(err);
   }
 });
-
 
 // Login API
 router.post("/signin", async (req, res) => {

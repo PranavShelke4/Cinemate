@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,11 +9,33 @@ import axios from "axios";
 import Search from "../../../../public/icons/home/Search.svg";
 import Like from "../../../../public/icons/home/Likes.svg";
 import Chat from "../../../../public/icons/home/Chat.svg";
-import Profile from "../../../../public/images/users.jpg";
+import DefaultProfile from "../../../../public/images/users.jpg";
 
 function NavBar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(DefaultProfile);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/profile", {
+          withCredentials: true,
+        });
+        const userProfile = response.data;
+        if (userProfile.profilePicture) {
+          setProfilePicture(`http://localhost:8080${userProfile.profilePicture}`);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error.response ? error.response.data : "Unknown error");
+        if (error.response && error.response.status === 401) {
+          router.push("/login");
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -30,10 +52,7 @@ function NavBar() {
       });
       router.push("/login");
     } catch (error) {
-      console.error(
-        "Error logging out:",
-        error.response ? error.response.data : "Unknown error"
-      );
+      console.error("Error logging out:", error.response ? error.response.data : "Unknown error");
     }
   };
 
@@ -57,11 +76,13 @@ function NavBar() {
           />
         </Link>
         <div className="relative">
-          <button onClick={toggleDropdown} className="focus:outline-none">
+          <button onClick={toggleDropdown} className="focus:outline-none flex justify-center items-center">
             <Image
-              src={Profile}
+              src={profilePicture}
               alt="Profile"
-              className="h-10 w-10 rounded-full hover:opacity-75"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-full hover:opacity-75 rounded-full object-cover"
             />
           </button>
           {dropdownOpen && (
