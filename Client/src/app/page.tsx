@@ -6,8 +6,10 @@ import Posts from "./components/Home/PostComponents/Posts";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col background">
+      <TopBar />
       <Stories />
       <Posts />
+      <BottomNav />
     </main>
   );
 }
