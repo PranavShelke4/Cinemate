@@ -40,15 +40,6 @@ const initialPosts = [
 function ProfilePage() {
   const [posts, setPosts] = useState(initialPosts);
 
-  const handleEditPost = (postId) => {
-    // Handle edit post logic
-    console.log("Edit post", postId);
-  };
-
-  const handleDeletePost = (postId) => {
-    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
-  };
-
   const handleUploadPost = (newPost) => {
     setPosts((prevPosts) => [
       {
@@ -64,14 +55,9 @@ function ProfilePage() {
 
   return (
     <div className="mx-auto px-4 sm:px-8 lg:px-28">
-      <ProfileHeader user={mockUser} />
-
+      <ProfileHeader />
       <UploadPostForm onUpload={handleUploadPost} />
-      <UserPosts
-        posts={posts}
-        onEdit={handleEditPost}
-        onDelete={handleDeletePost}
-      />
+      <UserPosts />
     </div>
   );
 }

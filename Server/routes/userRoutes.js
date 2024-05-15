@@ -33,9 +33,10 @@ router.get("/", (req, res) => {
 });
 
 // Register API
+// Register API
 router.post("/signup", upload.single("profilePicture"), async (req, res) => {
   const { name, email, number, gender, dob, password, cpassword } = req.body;
-  const profilePicture = req.file ? `/${req.file.path}` : null;
+  const profilePicture = req.file ? `/uploads/${req.file.filename}` : null;
 
   if (!name || !email || !number || !gender || !dob || !password || !cpassword) {
     return res.status(422).json({ error: "Please fill all fields" });
@@ -68,6 +69,7 @@ router.post("/signup", upload.single("profilePicture"), async (req, res) => {
     console.log(err);
   }
 });
+
 
 // Login API
 router.post("/signin", async (req, res) => {
