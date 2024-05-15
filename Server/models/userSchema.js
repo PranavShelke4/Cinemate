@@ -48,9 +48,9 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  tokans: [
+  tokens: [
     {
-      tokan: {
+      token: {
         type: String,
         required: true,
       },
@@ -58,10 +58,8 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
-//Password Hashing
-
+// Password Hashing
 userSchema.pre("save", async function (next) {
-  console.log("Hii Pranav");
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 12);
     this.cpassword = await bcrypt.hash(this.cpassword, 12);
@@ -69,14 +67,15 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Toakan generating
-
+// Token generation
 userSchema.methods.generateAuthToken = async function () {
   try {
-    let tokan = jwt.sign({ _id: this._id }, process.env.SECRET_KEY);
-    this.tokans = this.tokans.concat({ tokan: tokan });
+    const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    this.tokens = this.tokens.concat({ token });
     await this.save();
-    return tokan;
+    return token;
   } catch (err) {
     console.log(err);
   }

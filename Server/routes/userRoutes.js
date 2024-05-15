@@ -1,11 +1,12 @@
-const jwt = require("jsonwebtoken");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const Authenticate = require("../middleware/authenticate");
-
-require("../db/conn");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 const User = require("../models/userSchema");
+const authenticate = require("../middleware/authenticate");
+
+dotenv.config({ path: "./config.env" });
 
 router.get("/", (req, res) => {
   res.send("This is Home page by router");
@@ -15,8 +16,8 @@ router.get("/", (req, res) => {
 router.post("/signup", async (req, res) => {
   const { name, email, number, gender, dob, password, cpassword } = req.body;
 
-  if (!name | !email | !number | !gender | !dob | !password | !cpassword) {
-    return res.status(422).json({ error: "Plase Fill the all Fillde" });
+  if (!name || !email || !number || !gender || !dob || !password || !cpassword) {
+    return res.status(422).json({ error: "Please fill all fields" });
   }
 
   try {
@@ -24,14 +25,14 @@ router.post("/signup", async (req, res) => {
 
     if (userExist) {
       return res.status(422).json({ error: "Email Already Exist" });
-    } else if (password != cpassword) {
-      return res.status(422).json({ error: "Password not match" });
+    } else if (password !== cpassword) {
+      return res.status(422).json({ error: "Passwords do not match" });
     } else {
-      const user = new User({ name, email, number, password, cpassword });
+      const user = new User({ name, email, number, gender, dob, password, cpassword });
 
       await user.save();
 
-      res.status(201).json({ message: "User Registered Successfuly" });
+      res.status(201).json({ message: "User Registered Successfully" });
     }
   } catch (err) {
     console.log(err);
@@ -39,53 +40,60 @@ router.post("/signup", async (req, res) => {
 });
 
 // Login API
-
 router.post("/signin", async (req, res) => {
   try {
-    let tokan;
     const { email, password } = req.body;
 
-    if (!email | !password) {
-      return res.status(400).json({ error: "Plase Fill the all Fillde" });
+    if (!email || !password) {
+      return res.status(400).json({ error: "Please fill all fields" });
     }
 
-    const userLogin = await User.findOne({ email: email });
+    const userLogin = await User.findOne({ email });
 
     if (userLogin) {
-      const userPassword = await bcrypt.compare(password, userLogin.password);
+      const isMatch = await bcrypt.compare(password, userLogin.password);
 
-      // JWT tokan
-      tokan = await userLogin.generateAuthToken();
-      console.log(tokan);
-
-      // store tokan in cookies
-      res.cookie("jwtokan", tokan, {
-        expires: new Date(Date.now() + 25892000000),
-        httpOnly: true,
-      });
-
-      if (!userPassword) {
-        res.status(400).json({ error: "inviald Credentials" });
+      if (!isMatch) {
+        return res.status(400).json({ error: "Invalid Credentials" });
       } else {
-        res.json({ error: "User Signin Successfuly" });
+        // JWT token generation
+        const token = await userLogin.generateAuthToken();
+        console.log("Generated Token:", token);
+
+        // Store token in cookies
+        res.cookie("jwtToken", token, {
+          expires: new Date(Date.now() + 25892000000),
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production", // ensure secure cookies in production
+        });
+
+        res.json({ message: "User signed in successfully" });
       }
     } else {
-      res.status(400).json({ error: "inviald Credentials" });
+      res.status(400).json({ error: "Invalid Credentials" });
     }
   } catch (err) {
     console.log(err);
   }
 });
 
-router.get("/", Authenticate, (req, res) => {
-  console.log("This is Home page");
-  res.send(req.rootUser);
+// Fetch User Profile Information
+router.get("/profile", authenticate, (req, res) => {
+  if (!req.rootUser) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  res.status(200).json({
+    name: req.rootUser.name,
+    email: req.rootUser.email,
+    posts: req.rootUser.posts.length,
+    followers: req.rootUser.followers,
+    following: req.rootUser.following,
+  });
 });
 
-//logout
+// Logout
 router.get("/logout", (req, res) => {
-  console.log("Hello my logout Page");
-  res.clearCookie("jwtokan", { path: "/" });
+  res.clearCookie("jwtToken", { path: "/" });
   res.status(200).send("User Logout");
 });
 

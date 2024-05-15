@@ -3,14 +3,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
-import { useRouter } from "next/navigation"; // Updated import for router
+import { useRouter } from "next/navigation";
 
 function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const router = useRouter(); // Use useRouter hook from next/navigation
+  const router = useRouter();
 
   const { email, password } = formData;
 
@@ -26,6 +26,7 @@ function Login() {
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true, // Ensure credentials are included
       };
       const body = JSON.stringify({ email, password });
       const response = await axios.post(
@@ -35,13 +36,17 @@ function Login() {
       );
       console.log("Login Successful:", response.data);
 
-      // Redirect to the dashboard
-      router.push("/"); // Redirect to a dashboard or another appropriate page
+      // Redirect to the home page
+      router.push("/");
     } catch (error) {
-      console.error(
-        "Error during login:",
-        error.response ? error.response.data : "Unknown error"
-      );
+      if (error.response && error.response.status === 400) {
+        alert("Invalid email or password");
+      } else {
+        console.error(
+          "Error during login:",
+          error.response ? error.response.data : "Unknown error"
+        );
+      }
     }
   };
 

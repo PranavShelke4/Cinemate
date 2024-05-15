@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import Image from "next/image";
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -13,18 +14,35 @@ function Signup() {
     dob: "",
     password: "",
     cpassword: "",
+    profilePicture: null,
   });
 
-  const { name, email, number, gender, dob, password, cpassword } = formData;
+  const {
+    name,
+    email,
+    number,
+    gender,
+    dob,
+    password,
+    cpassword,
+    profilePicture,
+  } = formData;
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === "profilePicture") {
+      setFormData({
+        ...formData,
+        [e.target.name]: URL.createObjectURL(e.target.files[0]),
+      });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (password !== cpassword) {
-      console.log("Passwords do not match");
+      alert("Passwords do not match");
       return;
     }
 
@@ -52,10 +70,14 @@ function Signup() {
       console.log("User registered successfully:", res.data);
       // Redirect or update UI here
     } catch (error) {
-      console.error(
-        "Error registering the user:",
-        (error.response ? error.response.data : "Unknown error") as any
-      );
+      if (error.response && error.response.status === 422) {
+        alert(error.response.data.error);
+      } else {
+        console.error(
+          "Error registering the user:",
+          (error.response ? error.response.data : "Unknown error") as any
+        );
+      }
     }
   };
 
@@ -66,6 +88,40 @@ function Signup() {
           Sign up for Cinemate
         </h1>
         <form onSubmit={onSubmit}>
+          <div className="flex flex-col justify-center items-center mb-6">
+            <label htmlFor="profilePicture" className="cursor-pointer">
+              <div className="w-24 h-24 relative mb-5">
+                <div className="border group w-full h-full rounded-full overflow-hidden shadow-inner text-center bg-purple table cursor-pointer">
+                  {profilePicture ? (
+                    <Image
+                      src={profilePicture}
+                      alt="profile picture"
+                      width={96}
+                      height={50}
+                      className="object-cover object-center w-full max-h-24"
+                    />
+                  ) : (
+                    <span className="table-cell text-white font-bold align-middle">
+                      +
+                    </span>
+                  )}
+                </div>
+              </div>
+            </label>
+            <input
+              type="file"
+              id="profilePicture"
+              name="profilePicture"
+              onChange={onChange}
+              className="hidden"
+            />
+            <label
+              htmlFor="profilePicture"
+              className="block text-sm font-medium text-gray-200"
+            >
+              Profile Picture
+            </label>
+          </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="mb-4 w-full">
               <label
