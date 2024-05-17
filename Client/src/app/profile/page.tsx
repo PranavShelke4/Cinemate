@@ -1,14 +1,39 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import TopBar from "../components/Home/TopBar";
-import ProfilePage from "../components/Home/ProfileComponents/ProfilePage";
+import ProfileHeader from "../components/Home/ProfileComponents/ProfileHeader";
+import UserPosts from "../components/Home/ProfileComponents/UserPosts";
+import UploadPostForm from "../components/Home/ProfileComponents/UploadPostForm";
 import BottomNav from "../components/Home/BottomNav";
 
-export default function Profile() {
+function ProfilePage() {
+  const [posts, setPosts] = useState<any[]>([]);
+
+  const handleUploadPost = (newPost: any) => {
+    setPosts((prevPosts: any[]) => [
+      {
+        id: prevPosts.length + 1,
+        username: "John Doe",
+        userImage: "/path/to/profile.jpg",
+        timeAgo: "Just now",
+        ...newPost,
+      },
+      ...prevPosts,
+    ]);
+  };
+
   return (
-    <div className="mt-0 sm:mt-8 md:mt-16 lg:mt-20">
+    <>
       <TopBar />
-      <ProfilePage />
+      <div className="mx-auto mt-0 sm:mt-14 px-4 sm:px-8 lg:px-28">
+        <ProfileHeader />
+        <UploadPostForm onUpload={handleUploadPost} />
+        <UserPosts />
+      </div>
       <BottomNav />
-    </div>
+    </>
   );
 }
+
+export default ProfilePage;

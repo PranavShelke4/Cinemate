@@ -27,22 +27,27 @@ router.post(
   authenticate,
   upload.single("image"),
   async (req, res) => {
-    const { title } = req.body;
+    const { title, content } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-    if (!title || !image) {
+    if (!title || !image || !content) {
       return res
         .status(422)
         .json({ error: "Please provide all required fields" });
     }
 
     try {
+      const postId = generatePostId(); // Generate postId
       const post = new Post({
+        postId, // Include postId in the post data
         username: req.rootUser.name,
         userId: req.rootUser._id,
         userImage: req.rootUser.profilePicture,
         image,
         title,
+        content,
+        likes: 0,
+        comments: [],
       });
 
       await post.save();
@@ -80,5 +85,54 @@ router.get("/posts", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// Get a single post with comments
+router.get("/posts/:postId", async (req, res) => {
+  console.log("postId:", req.params.postId);
+
+  try {
+    const post = await Post.findById(req.params.postId);
+    console.log(post);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.status(200).json(post);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err);
+  }
+});
+
+// Add a comment to a post
+router.post("/posts/:postId/comments", authenticate, async (req, res) => {
+  const { content } = req.body;
+  if (!content) {
+    return res.status(422).json({ error: "Content is required" });
+  }
+
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const comment = {
+      username: req.rootUser.name,
+      content,
+    };
+
+    post.comments.push(comment);
+    await post.save();
+    res.status(201).json({ message: "Comment added successfully", post });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log(err);
+  }
+});
+
+// Function to generate unique postId
+function generatePostId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
 
 module.exports = router;

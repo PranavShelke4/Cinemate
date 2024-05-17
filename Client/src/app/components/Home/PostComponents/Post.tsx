@@ -1,22 +1,22 @@
-"use client";
-
 import React, { useState } from "react";
 import Image from "next/image";
 import { FaHeart, FaRegHeart, FaComment, FaShare } from "react-icons/fa";
 
-function Post({ post }) {
+function Post({ post }: { post: any }) {
   const [liked, setLiked] = useState(false);
 
   return (
     <div className="bg-gray-800 mb-8 sm:mb-0 text-white mx-4 sm:mx-16 mb-4 rounded-lg shadow-lg">
       <div className="flex items-center mb-4 bg-gray-900 p-4">
-        <Image
-          src={`http://localhost:8080${post.userImage}`}
-          alt={post.username}
-          width={40}
-          height={40}
-          className="rounded-full h-12 w-12 object-cover"
-        />
+        <div className="relative w-12 h-12">
+          <Image
+            src={`http://localhost:8080${post.userImage}`}
+            alt={post.username}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-full"
+          />
+        </div>
         <div className="ml-4">
           <h2 className="text-lg font-semibold">{post.username}</h2>
           <p className="text-gray-400 text-sm">{post.timeAgo}</p>

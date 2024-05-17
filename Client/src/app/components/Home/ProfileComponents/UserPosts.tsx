@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
+import Link from "next/link";
 
 // Skeleton Loader Component
 function SkeletonLoader() {
@@ -64,25 +65,26 @@ function UserPosts() {
 
   return (
     <div className="flex flex-wrap justify-start gap-4 border-t pt-4">
-      {posts.map((post) => (
-        <div key={post._id} className="relative w-[32%] bg-gray-700 rounded-lg flex justify-center items-center">
-          <Image
-            className="h-[24rem] object-cover rounded-lg hover:opacity-50"
-            src={`http://localhost:8080${post.image}`}
-            alt={post.title}
-            width={300}
-            height={300}
-          />
-          <div className="absolute inset-0 flex justify-center items-center opacity-0 hover:opacity-100">
-            <button className="m-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Edit
-            </button>
-            <button className="m-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-              Delete
-            </button>
+      {posts.map((post) => {
+        console.log("postId:", post._id); // Log the postId
+
+        return (
+          <div
+            key={post._id}
+            className="relative w-[32%] bg-gray-700 rounded-lg flex justify-center items-center cursor-pointer"
+          >
+            <Link href={`/post/${post._id}`} passHref>
+              <Image
+                className="h-[24rem] object-cover rounded-lg hover:opacity-50"
+                src={`http://localhost:8080${post.image}`}
+                alt={post.title}
+                width={300}
+                height={300}
+              />
+            </Link>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
