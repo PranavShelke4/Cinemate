@@ -1,8 +1,8 @@
-// routes/postRoutes.js
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const fs = require("fs");
+const path = require("path");
 const Post = require("../models/Post");
 const authenticate = require("../middleware/authenticate");
 
@@ -87,19 +87,15 @@ router.get("/posts", async (req, res) => {
 });
 
 // Get a single post with comments
-router.get("/posts/:postId", async (req, res) => {
-  console.log("postId:", req.params.postId);
-
+router.get("/posts/:postId", authenticate, async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
-    console.log(post);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-    res.status(200).json(post);
+    res.status(200).json({ post, userId: req.rootUser._id });
   } catch (err) {
     res.status(500).json({ message: err.message });
-    console.log(err);
   }
 });
 
@@ -126,7 +122,29 @@ router.post("/posts/:postId/comments", authenticate, async (req, res) => {
     res.status(201).json({ message: "Comment added successfully", post });
   } catch (err) {
     res.status(500).json({ message: err.message });
-    console.log(err);
+  }
+});
+
+// Delete a post and its image
+router.delete("/posts/:postId", authenticate, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Delete the image file
+    const imagePath = path.join(__dirname, "..", post.image);
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error("Error deleting image:", err);
+      }
+    });
+
+    await Post.findByIdAndDelete(req.params.postId);
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
