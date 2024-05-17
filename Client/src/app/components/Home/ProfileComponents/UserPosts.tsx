@@ -30,7 +30,7 @@ function UserPosts() {
           withCredentials: true,
         });
         setPosts(response.data);
-      } catch (err) {
+      } catch (err: any) {
         console.error(
           "Error fetching user posts:",
           err.response ? err.response.data : "Unknown error"
@@ -64,18 +64,16 @@ function UserPosts() {
   }
 
   return (
-    <div className="flex flex-wrap justify-start gap-4 border-t pt-4">
+    <div className="flex flex-wrap justify-start gap-4 border-t pt-4 mb-20 sm:mb-0">
       {posts.map((post) => {
-        console.log("postId:", post._id); // Log the postId
-
         return (
           <div
             key={post._id}
-            className="relative w-[32%] bg-gray-700 rounded-lg flex justify-center items-center cursor-pointer"
+            className="flex flex-row relative w-[47%] sm:w-[32%] bg-gray-700 rounded-lg flex justify-center items-center cursor-pointer"
           >
             <Link href={`/post/${post._id}`} passHref>
               <Image
-                className="h-[24rem] object-cover rounded-lg hover:opacity-50"
+                className="h-[15rem] sm:h-[24rem] object-cover rounded-lg hover:opacity-50"
                 src={`http://localhost:8080${post.image}`}
                 alt={post.title}
                 width={300}

@@ -24,10 +24,15 @@ function NavBar() {
         });
         const userProfile = response.data;
         if (userProfile.profilePicture) {
-          setProfilePicture(`http://localhost:8080${userProfile.profilePicture}`);
+          setProfilePicture(
+            `http://localhost:8080${userProfile.profilePicture}`
+          );
         }
       } catch (error) {
-        console.error("Error fetching user profile:", error.response ? error.response.data : "Unknown error");
+        console.error(
+          "Error fetching user profile:",
+          error.response ? error.response.data : "Unknown error"
+        );
         if (error.response && error.response.status === 401) {
           router.push("/login");
         }
@@ -52,23 +57,35 @@ function NavBar() {
       });
       router.push("/login");
     } catch (error) {
-      console.error("Error logging out:", error.response ? error.response.data : "Unknown error");
+      console.error(
+        "Error logging out:",
+        error.response ? error.response.data : "Unknown error"
+      );
     }
   };
 
   return (
-    <div className="hidden bg-gray-900 sm:flex fixed top-0 z-50 border-b-2 w-full text-white flex justify-between items-center p-4">
+    <div className="hidden bg-gray-500 sm:flex fixed top-0 z-50 border-b-2 w-full text-white flex justify-between items-center p-4 backdrop-filter backdrop-blur-lg bg-opacity-30 bg-white">
       <div className="text-xl font-bold">
         <Link href="/">Cinemate</Link>
       </div>
       <div className="flex space-x-8 relative">
-        <Link href="/search" className="bg-[#292938] flex justify-center items-center  p-2 rounded-xl">
+        <Link
+          href="/search"
+          className="bg-[#292938] flex justify-center items-center  p-2 rounded-xl"
+        >
           <Image src={Search} alt="Search" className="h-6 hover:opacity-75" />
         </Link>
-        <Link href="/favorites" className="bg-[#292938] flex justify-center items-center p-2 rounded-xl">
+        <Link
+          href="/favorites"
+          className="bg-[#292938] flex justify-center items-center p-2 rounded-xl"
+        >
           <Image src={Like} alt="Favorites" className="h-6 hover:opacity-75" />
         </Link>
-        <Link href="/notifications" className="bg-[#292938] flex justify-center items-center p-2 rounded-xl">
+        <Link
+          href="/notifications"
+          className="bg-[#292938] flex justify-center items-center p-2 rounded-xl"
+        >
           <Image
             src={Chat}
             alt="Notifications"
@@ -76,7 +93,10 @@ function NavBar() {
           />
         </Link>
         <div className="relative">
-          <button onClick={toggleDropdown} className="focus:outline-none flex justify-center items-center">
+          <button
+            onClick={toggleDropdown}
+            className="focus:outline-none flex justify-center items-center"
+          >
             <Image
               src={profilePicture}
               alt="Profile"
