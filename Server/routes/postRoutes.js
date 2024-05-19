@@ -85,7 +85,7 @@ router.get("/posts", async (req, res) => {
   }
 });
 
-// Get a single post with comments
+// Get a single post
 router.get("/posts/:postId", authenticate, async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
@@ -93,7 +93,20 @@ router.get("/posts/:postId", authenticate, async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
     const liked = post.likes.includes(req.rootUser._id.toString());
-    res.status(200).json({ post, liked });
+    const likesCount = post.likes.length;
+    res.status(200).json({ post, liked, likesCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post("/users/details", async (req, res) => {
+  try {
+    const { userIds } = req.body; 
+    const users = await User.find({ _id: { $in: userIds } }).select(
+      "name profilePicture"
+    );
+    res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -43,27 +43,36 @@ interface Post {
   title: string;
   image: string;
   content: string;
-  likes: number;
+  likes: string[]; // Adjusted to be an array of strings (user IDs)
   comments: Comment[];
   userImage: string;
   username: string;
   userId: string;
 }
 
+interface User {
+  _id: string;
+  name: string;
+  profilePicture: string;
+}
+
 const PostPage: React.FC = () => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [likedUsers, setLikedUsers] = useState<User[]>([]);
+  const [showLikesPopup, setShowLikesPopup] = useState(false);
   const { postId } = useParams();
   const router = useRouter();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get<{ post: Post; userId: string }>(
-          `http://localhost:8080/posts/${postId}`,
-          { withCredentials: true }
-        );
+        const response = await axios.get<{
+          post: Post;
+          userId: string;
+          likesCount: number;
+        }>(`http://localhost:8080/posts/${postId}`, { withCredentials: true });
         setPost(response.data.post);
         setCurrentUserId(response.data.userId);
       } catch (err: any) {
@@ -91,13 +100,28 @@ const PostPage: React.FC = () => {
       await axios.delete(`http://localhost:8080/posts/${postId}`, {
         withCredentials: true,
       });
-      router.push("/profile"); // Redirect to the home page after deleting
+      router.push("/profile"); // Redirect to the profile page after deleting
     } catch (err: any) {
       console.error(
         "Error deleting post:",
         err.response ? err.response.data : "Unknown error"
       );
     }
+  };
+
+  const fetchLikedUsers = async () => {
+    if (!post) return;
+    setShowLikesPopup(true);
+    console.log("Fetching liked users...");
+    // try {
+    //   const response = await axios.post("http://localhost:8080/users/details", {
+    //     userIds: post.likes,
+    //   });
+    //   setLikedUsers(response.data);
+    //   setShowLikesPopup(true);
+    // } catch (err) {
+    //   console.error("Error fetching liked users:", err);
+    // }
   };
 
   if (loading) {
@@ -198,7 +222,9 @@ const PostPage: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <FaHeart className="text-red-500" size={24} />
-            <span>{post.likes}</span>
+            <button onClick={fetchLikedUsers}>
+              {Array.isArray(post.likes) ? post.likes.length : 0}
+            </button>
           </div>
           <div className="flex items-center">
             <FaComment className="w-6 h-6 text-blue-500 mr-2" />
@@ -231,6 +257,37 @@ const PostPage: React.FC = () => {
         </div>
       </div>
       <BottomBar />
+
+      {showLikesPopup && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 cursor-pointer" 
+          onClick={() => setShowLikesPopup(false)} 
+        >
+          <div
+            className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-md w-full overflow-y-auto h-[80vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold mb-4">Liked by</h2>
+            {likedUsers.length > 0 ? (
+              likedUsers.map((user) => (
+                <div key={user._id} className="flex items-center mb-4">
+                  <Image
+                    src={`http://localhost:8080${user.profilePicture}`}
+                    alt={user.name}
+                    width={40}
+                    height={40}
+                    objectFit="cover"
+                    className="rounded-full"
+                  />
+                  <span className="ml-4">{user.name}</span>
+                </div>
+              ))
+            ) : (
+              <p>No users liked this post</p>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 };
