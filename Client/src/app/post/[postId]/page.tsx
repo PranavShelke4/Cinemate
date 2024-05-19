@@ -91,7 +91,7 @@ const PostPage: React.FC = () => {
       await axios.delete(`http://localhost:8080/posts/${postId}`, {
         withCredentials: true,
       });
-      router.push("/"); // Redirect to the home page after deleting
+      router.push("/profile"); // Redirect to the home page after deleting
     } catch (err: any) {
       console.error(
         "Error deleting post:",

@@ -45,7 +45,7 @@ router.post(
         userImage: req.rootUser.profilePicture,
         image,
         title,
-        likes: 0,
+        likes: [], // Initialize likes as an empty array
         comments: [],
       });
 
@@ -92,7 +92,8 @@ router.get("/posts/:postId", authenticate, async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-    res.status(200).json({ post, userId: req.rootUser._id });
+    const liked = post.likes.includes(req.rootUser._id.toString());
+    res.status(200).json({ post, liked });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -132,14 +133,19 @@ router.post("/posts/:postId/like", authenticate, async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    if (!post.likes.includes(req.rootUser._id)) {
-      post.likes.push(req.rootUser._id);
+    if (!Array.isArray(post.likes)) {
+      post.likes = [];
+    }
+
+    if (!post.likes.includes(req.rootUser._id.toString())) {
+      post.likes.push(req.rootUser._id.toString());
       await post.save();
       return res.status(200).json({ message: "Post liked", post });
     } else {
       return res.status(400).json({ message: "Post already liked" });
     }
   } catch (err) {
+    console.error("Error liking post:", err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -152,7 +158,11 @@ router.post("/posts/:postId/unlike", authenticate, async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    const index = post.likes.indexOf(req.rootUser._id);
+    if (!Array.isArray(post.likes)) {
+      post.likes = [];
+    }
+
+    const index = post.likes.indexOf(req.rootUser._id.toString());
     if (index > -1) {
       post.likes.splice(index, 1);
       await post.save();
@@ -161,6 +171,7 @@ router.post("/posts/:postId/unlike", authenticate, async (req, res) => {
       return res.status(400).json({ message: "Post not liked" });
     }
   } catch (err) {
+    console.error("Error unliking post:", err);
     res.status(500).json({ message: err.message });
   }
 });
