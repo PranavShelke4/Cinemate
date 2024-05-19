@@ -27,10 +27,10 @@ router.post(
   authenticate,
   upload.single("image"),
   async (req, res) => {
-    const { title, content } = req.body;
+    const { title } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-    if (!title || !image || !content) {
+    if (!title || !image) {
       return res
         .status(422)
         .json({ error: "Please provide all required fields" });
@@ -45,7 +45,6 @@ router.post(
         userImage: req.rootUser.profilePicture,
         image,
         title,
-        content,
         likes: 0,
         comments: [],
       });
@@ -120,6 +119,47 @@ router.post("/posts/:postId/comments", authenticate, async (req, res) => {
     post.comments.push(comment);
     await post.save();
     res.status(201).json({ message: "Comment added successfully", post });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Like a post
+router.post("/posts/:postId/like", authenticate, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    if (!post.likes.includes(req.rootUser._id)) {
+      post.likes.push(req.rootUser._id);
+      await post.save();
+      return res.status(200).json({ message: "Post liked", post });
+    } else {
+      return res.status(400).json({ message: "Post already liked" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Unlike a post
+router.post("/posts/:postId/unlike", authenticate, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const index = post.likes.indexOf(req.rootUser._id);
+    if (index > -1) {
+      post.likes.splice(index, 1);
+      await post.save();
+      return res.status(200).json({ message: "Post unliked", post });
+    } else {
+      return res.status(400).json({ message: "Post not liked" });
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
