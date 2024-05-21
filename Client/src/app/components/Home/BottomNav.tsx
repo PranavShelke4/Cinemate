@@ -5,7 +5,7 @@ import Image from "next/image";
 import Search from "../../../../public/icons/home/Search.svg";
 import Like from "../../../../public/icons/home/Likes.svg";
 import Chat from "../../../../public/icons/home/Chat.svg";
-import User from "../../../../public/icons/home/user.svg";
+import User from "../../../../public/icons/home/User.svg";
 import Home from "../../../../public/icons/home/Home.svg";
 
 function BottomNav() {
