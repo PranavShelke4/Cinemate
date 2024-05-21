@@ -27,10 +27,10 @@ router.post(
   authenticate,
   upload.single("image"),
   async (req, res) => {
-    const { title, content } = req.body;
+    const { title } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-    if (!title || !image || !content) {
+    if (!title || !image) {
       return res
         .status(422)
         .json({ error: "Please provide all required fields" });
@@ -45,8 +45,7 @@ router.post(
         userImage: req.rootUser.profilePicture,
         image,
         title,
-        content,
-        likes: [],
+        likes: [], // Initialize likes as an empty array
         comments: [],
       });
 
@@ -86,14 +85,28 @@ router.get("/posts", async (req, res) => {
   }
 });
 
-// Get a single post with comments
+// Get a single post
 router.get("/posts/:postId", authenticate, async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-    res.status(200).json({ post, userId: req.rootUser._id });
+    const liked = post.likes.includes(req.rootUser._id.toString());
+    const likesCount = post.likes.length;
+    res.status(200).json({ post, liked, likesCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post("/users/details", async (req, res) => {
+  try {
+    const { userIds } = req.body; 
+    const users = await User.find({ _id: { $in: userIds } }).select(
+      "name profilePicture"
+    );
+    res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -133,13 +146,19 @@ router.post("/posts/:postId/like", authenticate, async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    if (!post.likes.includes(req.rootUser._id)) {
-      post.likes.push(req.rootUser._id);
-      await post.save();
+    if (!Array.isArray(post.likes)) {
+      post.likes = [];
     }
 
-    res.status(200).json({ message: "Post liked", post });
+    if (!post.likes.includes(req.rootUser._id.toString())) {
+      post.likes.push(req.rootUser._id.toString());
+      await post.save();
+      return res.status(200).json({ message: "Post liked", post });
+    } else {
+      return res.status(400).json({ message: "Post already liked" });
+    }
   } catch (err) {
+    console.error("Error liking post:", err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -152,13 +171,20 @@ router.post("/posts/:postId/unlike", authenticate, async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    post.likes = post.likes.filter(
-      (userId) => userId.toString() !== req.rootUser._id.toString()
-    );
-    await post.save();
+    if (!Array.isArray(post.likes)) {
+      post.likes = [];
+    }
 
-    res.status(200).json({ message: "Post unliked", post });
+    const index = post.likes.indexOf(req.rootUser._id.toString());
+    if (index > -1) {
+      post.likes.splice(index, 1);
+      await post.save();
+      return res.status(200).json({ message: "Post unliked", post });
+    } else {
+      return res.status(400).json({ message: "Post not liked" });
+    }
   } catch (err) {
+    console.error("Error unliking post:", err);
     res.status(500).json({ message: err.message });
   }
 });

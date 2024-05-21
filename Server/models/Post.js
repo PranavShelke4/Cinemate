@@ -18,7 +18,7 @@ const postSchema = new mongoose.Schema(
     userImage: { type: String, required: true },
     image: { type: String, required: true },
     title: { type: String, required: true },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    likes: { type: [mongoose.Schema.Types.ObjectId], ref: "User", default: [] },
     comments: [commentSchema],
     shares: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now },

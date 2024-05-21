@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import defaultProfileImage from "../../../../../public/images/users.jpg";
+import defaultProfileImage from "../../../../public/images/users.jpg";
 import ProfileStats from "./ProfileStats";
 import axios from "axios";
 import { useRouter } from "next/navigation";

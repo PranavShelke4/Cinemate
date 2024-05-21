@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import TopBar from "../components/Home/TopBar";
-import ProfileHeader from "../components/Home/ProfileComponents/ProfileHeader";
-import UserPosts from "../components/Home/ProfileComponents/UserPosts";
-import UploadPostForm from "../components/Home/ProfileComponents/UploadPostForm";
+import ProfileHeader from "../components/Profile/ProfileHeader";
+import UserPosts from "../components/Profile/UserPosts";
+import UploadPostForm from "../components/Profile/UploadPostForm";
 import BottomNav from "../components/Home/BottomNav";
 
 function ProfilePage() {
