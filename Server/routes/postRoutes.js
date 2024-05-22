@@ -100,14 +100,19 @@ router.get("/posts/:postId", authenticate, async (req, res) => {
   }
 });
 
+// Endpoint to get user details based on user IDs
 router.post("/users/details", async (req, res) => {
   try {
     const { userIds } = req.body; 
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({ message: "Invalid user IDs" });
+    }
     const users = await User.find({ _id: { $in: userIds } }).select(
       "name profilePicture"
     );
     res.status(200).json(users);
   } catch (err) {
+    console.error("Error fetching user details:", err);
     res.status(500).json({ message: err.message });
   }
 });

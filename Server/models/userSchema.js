@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
   },
   profilePicture: {
     type: String,
+    required: false,
   },
   bio: {
     type: String,
@@ -81,6 +82,5 @@ userSchema.methods.generateAuthToken = async function () {
   }
 };
 
-const User = mongoose.model("USER", userSchema);
-
+const User = mongoose.model("USER", userSchema); // Correct model name
 module.exports = User;

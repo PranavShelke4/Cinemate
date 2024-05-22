@@ -43,7 +43,7 @@ interface Post {
   title: string;
   image: string;
   content: string;
-  likes: string[]; // Adjusted to be an array of strings (user IDs)
+  likes: string[]; 
   comments: Comment[];
   userImage: string;
   username: string;
@@ -100,7 +100,7 @@ const PostPage: React.FC = () => {
       await axios.delete(`http://localhost:8080/posts/${postId}`, {
         withCredentials: true,
       });
-      router.push("/profile"); // Redirect to the profile page after deleting
+      router.push("/profile"); 
     } catch (err: any) {
       console.error(
         "Error deleting post:",
@@ -112,16 +112,17 @@ const PostPage: React.FC = () => {
   const fetchLikedUsers = async () => {
     if (!post) return;
     setShowLikesPopup(true);
-    console.log("Fetching liked users...");
-    // try {
-    //   const response = await axios.post("http://localhost:8080/users/details", {
-    //     userIds: post.likes,
-    //   });
-    //   setLikedUsers(response.data);
-    //   setShowLikesPopup(true);
-    // } catch (err) {
-    //   console.error("Error fetching liked users:", err);
-    // }
+    try {
+      const response = await axios.post("http://localhost:8080/users/details", {
+        userIds: post.likes,
+      });
+      setLikedUsers(response.data);
+    } catch (err) {
+      console.error(
+        "Error fetching liked users:",
+        err.response ? err.response.data : "Unknown error"
+      );
+    }
   };
 
   if (loading) {
@@ -137,6 +138,9 @@ const PostPage: React.FC = () => {
   }
 
   const isPostOwner = currentUserId === post.userId;
+  console.log(isPostOwner);
+  console.log(currentUserId);
+  console.log(post.userId);
 
   return (
     <>
@@ -260,13 +264,32 @@ const PostPage: React.FC = () => {
 
       {showLikesPopup && (
         <div
-          className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 cursor-pointer" 
-          onClick={() => setShowLikesPopup(false)} 
+          className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 cursor-pointer"
+          onClick={() => setShowLikesPopup(false)}
         >
           <div
-            className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-md w-full overflow-y-auto h-[80vh]"
+            className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full md:w-full overflow-y-auto h-full md:h-[80vh] cursor-auto"
             onClick={(e) => e.stopPropagation()}
           >
+            <button
+              className="absolute top-0 right-0 mt-4 mr-4 text-gray-500 hover:text-gray-300 sm:hidden" // Added sm:hidden to hide the button on screens larger than sm
+              onClick={() => setShowLikesPopup(false)}
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
             <h2 className="text-xl font-bold mb-4">Liked by</h2>
             {likedUsers.length > 0 ? (
               likedUsers.map((user) => (
