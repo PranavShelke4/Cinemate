@@ -3,7 +3,7 @@ import axios from "axios";
 import Image from "next/image";
 import { FaHeart, FaRegHeart, FaComment, FaShare } from "react-icons/fa";
 
-function Post({ post }) {
+function Post({ post }: { post: any }) {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(
     post.likes ? post.likes.length : 0
